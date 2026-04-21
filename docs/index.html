@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WARP · Weight Teleportation for Attack-Resilient Unlearning Protocols</title>
+<meta name="description" content="WARP is a plug-and-play symmetry-based defense that reshapes the geometry of approximate unlearning to suppress privacy leakage. ICLR 2026." />
+
+<meta property="og:title" content="WARP — Weight Teleportation for Attack-Resilient Unlearning Protocols" />
+<meta property="og:description" content="A symmetry-based defense for privacy leakage in approximate machine unlearning. ICLR 2026." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="assets/fig_methodology.png" />
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --bg-alt: #F7F7F9;
+    --bg-soft: #FAFAFB;
+    --ink: #111217;
+    --ink-soft: #50525A;
+    --ink-muted: #7A7C85;
+    --rule: #E6E7EB;
+    --rule-soft: #EFEFF3;
+    --accent: #1E40AF;
+    --accent-soft: #E8EDFA;
+    --hot: #C72124;
+    --hot-soft: #FDEEEF;
+    --good: #0D7A3E;
+    --good-soft: #E8F4EC;
+    --imperial: #0000CD;
+    --dartmouth: #00693E;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --serif: "Source Serif 4", Georgia, "Times New Roman", Times, serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; scroll-padding-top: 60px; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  /* ---------- TOP NAVIGATION ---------- */
+  nav.topnav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--rule);
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+  }
+  nav .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--hot);
+    margin-right: auto;
+    text-decoration: none;
+  }
+  nav .brand .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--hot);
+  }
+  nav .links {
+    display: flex;
+    gap: 26px;
+    align-items: center;
+  }
+  nav .links a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color .15s;
+  }
+  nav .links a:hover { color: var(--ink); }
+  @media (max-width: 720px) {
+    nav.topnav { padding: 0 18px; }
+    nav .links { gap: 14px; font-size: 13px; }
+    nav .links a.hide-mobile { display: none; }
+  }
+
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  @media (max-width: 720px) { .wrap { padding: 0 18px; } }
+
+  /* ---------- HERO ---------- */
+  header.hero {
+    padding: 72px 0 56px;
+    text-align: center;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .venue-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--hot-soft);
+    color: var(--hot);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .venue-badge::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--hot);
+  }
+
+  h1.title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(34px, 5.2vw, 56px);
+    line-height: 1.08;
+    letter-spacing: -0.018em;
+    margin: 0 auto 22px;
+    color: var(--ink);
+    max-width: 880px;
+  }
+  h1.title .wrp {
+    color: var(--hot);
+    font-style: italic;
+  }
+  .tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(17px, 1.9vw, 21px);
+    color: var(--ink-soft);
+    max-width: 680px;
+    margin: 0 auto 40px;
+    line-height: 1.5;
+  }
+
+  .authors {
+    font-size: 16px;
+    margin: 32px 0 8px;
+    color: var(--ink);
+  }
+  .authors .author { display: inline-block; margin: 0 4px; white-space: nowrap; }
+  .authors .author a {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color .15s;
+  }
+  .authors .author a:hover { border-bottom-color: var(--ink-muted); }
+  .authors .author sup {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    margin-left: 1px;
+  }
+  .authors .sep { color: var(--ink-muted); margin: 0 4px; }
+  .affiliations {
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+  }
+  .affiliations sup {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-muted);
+    margin-right: 2px;
+  }
+
+  .logos-hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin: 28px 0 36px;
+    opacity: 0.88;
+  }
+  .logos-hero img { height: 34px; width: auto; }
+
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 28px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all .15s;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); transform: translateY(-1px); }
+  .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .btn.primary:hover { background: var(--hot); border-color: var(--hot); }
+  .btn svg { width: 15px; height: 15px; }
+
+  /* ---------- SECTIONS ---------- */
+  section {
+    padding: 72px 0 48px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  section:last-of-type { border-bottom: none; }
+  .section-head {
+    margin-bottom: 28px;
+  }
+  .section-label {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--hot);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  h2.section-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 1.15;
+    margin: 0;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .section-lede {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 18.5px;
+    margin: 8px 0 0;
+    line-height: 1.45;
+  }
+
+  p { margin: 0 0 18px; color: var(--ink); }
+  strong { font-weight: 600; color: var(--ink); }
+  em { color: var(--ink-soft); }
+
+  /* TL;DR card */
+  .tldr {
+    background: var(--bg-alt);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin: 0 0 8px;
+    position: relative;
+    border: 1px solid var(--rule);
+  }
+  .tldr::before {
+    content: "TL;DR";
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 3px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+    border-radius: 4px;
+  }
+  .tldr p { margin: 0; font-size: 16.5px; line-height: 1.65; }
+
+  .chip {
+    display: inline-block;
+    padding: 1px 7px;
+    font-family: var(--mono);
+    font-size: 0.85em;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--ink);
+  }
+  .hl {
+    background: linear-gradient(180deg, transparent 55%, var(--hot-soft) 55%);
+    padding: 0 3px;
+    color: var(--ink);
+  }
+
+  figure.fig {
+    margin: 28px 0;
+    text-align: center;
+  }
+  figure.fig img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
+  }
+  figure.fig.framed img {
+    border: 1px solid var(--rule);
+    background: white;
+    padding: 16px;
+  }
+  figure.fig figcaption {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    margin-top: 14px;
+    line-height: 1.5;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  figure.fig figcaption b {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 28px 0;
+  }
+  @media (max-width: 720px) {
+    .cards { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    padding: 22px 24px 20px;
+    border-radius: 12px;
+    transition: border-color .15s;
+  }
+  .card:hover { border-color: var(--ink-muted); }
+  .card .card-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--hot);
+    letter-spacing: 0.12em;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .card h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 20px;
+    margin: 0 0 10px;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+  .card p {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 0 0 16px;
+  }
+  @media (max-width: 720px) { .stats { grid-template-columns: 1fr; } }
+  .stat {
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    padding: 24px 24px 22px;
+    border-radius: 12px;
+  }
+  .stat .big {
+    font-family: var(--serif);
+    font-size: 52px;
+    line-height: 1;
+    color: var(--hot);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .stat .big .unit {
+    font-size: 24px;
+    color: var(--ink-muted);
+    margin-left: 2px;
+    font-weight: 400;
+  }
+  .stat .label {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    line-height: 1.45;
+  }
+
+  .eq-img {
+    margin: 24px 0 28px;
+    padding: 24px 16px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .eq-img img {
+    max-width: 100%;
+    height: auto;
+    display: inline-block;
+  }
+
+  .tbl-scroll {
+    overflow-x: auto;
+    margin: 16px 0;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    background: var(--bg);
+  }
+  table.results {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  table.results thead th {
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    padding: 14px 12px 12px;
+    border-bottom: 1px solid var(--rule);
+    text-align: right;
+    background: var(--bg-soft);
+    white-space: nowrap;
+  }
+  table.results thead th.method { text-align: left; }
+  table.results thead th.group {
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 6px;
+  }
+  table.results thead tr:first-child th { padding-top: 16px; }
+  table.results td {
+    padding: 10px 12px;
+    text-align: right;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  table.results td.method {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink);
+  }
+  table.results tr:last-child td { border-bottom: none; }
+  table.results tr.warp td {
+    background: var(--hot-soft);
+    font-weight: 500;
+  }
+  table.results tr.warp td.method {
+    color: var(--hot);
+    font-weight: 600;
+  }
+  table.results tr.div td {
+    padding: 0;
+    height: 1px;
+    background: var(--rule);
+    border: none;
+  }
+  table.results .group-divider { border-right: 1px solid var(--rule); }
+  .tbl-note {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+
+  .bibtex {
+    background: var(--ink);
+    color: #E4E4E9;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.55;
+    padding: 22px 26px;
+    border-radius: 12px;
+    overflow-x: auto;
+    white-space: pre;
+    position: relative;
+    margin: 0;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 14px; right: 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    color: #9C9DA5;
+    border: 1px solid #3A3B45;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .copy-btn:hover { color: white; border-color: white; }
+  .copy-btn.ok { color: #6ADB9B; border-color: #6ADB9B; }
+
+  .takeaway {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .takeaway:last-child { border-bottom: none; }
+  .takeaway .num {
+    flex: 0 0 auto;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--hot-soft);
+    color: var(--hot);
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 15px;
+    display: grid;
+    place-items: center;
+  }
+  .takeaway .body h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 19px;
+    margin: 3px 0 6px;
+    line-height: 1.25;
+  }
+  .takeaway .body p {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  footer {
+    padding: 48px 0 56px;
+    font-size: 13px;
+    color: var(--ink-muted);
+    text-align: center;
+    line-height: 1.75;
+  }
+  footer .funding {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.02em;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule-soft);
+  }
+  footer .logos-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+    margin-bottom: 10px;
+    opacity: 0.75;
+  }
+  footer .logos-footer img { height: 26px; width: auto; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="#top" class="brand"><span class="dot"></span>WARP</a>
+  <div class="links">
+    <a href="#problem" class="hide-mobile">Problem</a>
+    <a href="#method">Method</a>
+    <a href="#results">Results</a>
+    <a href="#reconstruction" class="hide-mobile">Reconstruction</a>
+    <a href="#bibtex">Cite</a>
+  </div>
+</nav>
+
+<div id="top"></div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="venue-badge">ICLR 2026 · Rio de Janeiro</span>
+
+    <h1 class="title">
+      <span class="wrp">W</span>eight <span class="wrp">T</span>eleportation for
+      <span class="wrp">A</span>ttack-<span class="wrp">R</span>esilient Unlearning
+      <span class="wrp">P</span>rotocols
+    </h1>
+
+    <p class="tagline">
+      A plug-and-play symmetry defense that reshapes the geometry of approximate unlearning —
+      reducing privacy leakage without retraining, added noise, or changing the unlearning algorithm.
+    </p>
+
+    <div class="authors">
+      <span class="author"><a href="#">Mohammad M. Maheri</a><sup>1</sup></span><span class="sep">·</span>
+      <span class="author"><a href="#">Xavier Cadet</a><sup>2</sup></span><span class="sep">·</span>
+      <span class="author"><a href="#">Peter Chin</a><sup>2</sup></span><span class="sep">·</span>
+      <span class="author"><a href="#">Hamed Haddadi</a><sup>1</sup></span>
+    </div>
+    <div class="affiliations">
+      <sup>1</sup>Imperial College London &nbsp;&nbsp;
+      <sup>2</sup>Dartmouth College
+    </div>
+
+    <div class="logos-hero">
+      <img src="assets/imperial.png" alt="Imperial College London" />
+      <img src="assets/dartmouth.png" alt="Dartmouth College" />
+    </div>
+
+    <div class="btn-row">
+      <a class="btn primary" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Paper (arXiv)
+      </a>
+      <a class="btn" href="https://openreview.net/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/><path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"/></svg>
+        OpenReview
+      </a>
+      <a class="btn" href="https://github.com/mammadmaheri7/WARP_Unlearning" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.8 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.6-1.3-1.6-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.4-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.2 1.2.9-.3 1.9-.4 2.9-.4s2 .1 2.9.4c2.2-1.5 3.2-1.2 3.2-1.2.6 1.7.2 2.9.1 3.2.7.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.5 4.5-1.5 7.8-5.8 7.8-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+        Code
+      </a>
+      <a class="btn" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        Poster
+      </a>
+      <a class="btn" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Slides
+      </a>
+      <a class="btn" href="#bibtex">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10H3"/><path d="M21 6H3"/><path d="M21 14H3"/><path d="M21 18H3"/></svg>
+        BibTeX
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section id="tldr" style="padding-top: 64px;">
+    <div class="tldr">
+      <p>
+        Approximate machine unlearning leaks: the difference
+        <span class="chip">Δθ = θ<sub>u</sub> − θ<sub>org</sub></span>
+        encodes a forget-set gradient that attackers can invert. <strong>WARP</strong> interleaves a
+        <span class="hl">loss-invariant teleportation step</span> with unlearning — walking along a
+        symmetry orbit of the network to <strong>shrink forget-set gradients</strong> and
+        <strong>disperse parameters</strong>, all while keeping predictions on the retain set intact.
+        Result: up to <strong>−64% black-box</strong> and <strong>−92% white-box</strong> adversary
+        advantage across six unlearning methods, with utility preserved.
+      </p>
+    </div>
+  </section>
+
+  <section id="problem">
+    <div class="section-head">
+      <span class="section-label">01 · The Threat</span>
+      <h2 class="section-title">The privacy gap in unlearning</h2>
+      <p class="section-lede">Unlearning is efficient — but privacy is not automatic.</p>
+    </div>
+
+    <p>
+      An adversary who holds both the original model <span class="chip">θ<sub>org</sub></span> and the
+      unlearned model <span class="chip">θ<sub>u</sub></span> observes their difference, which to first
+      order is a weighted forget-set gradient. That single quantity is enough to mount strong
+      <em>membership inference</em> and even <em>data reconstruction</em> attacks.
+    </p>
+
+    <figure class="fig">
+      <img src="assets/fig_problem.png" alt="Threat model — adversary with access to both original and unlearned model runs membership inference and reconstruction attacks." />
+      <figcaption><b>Fig 1.</b> Threat model. An adversary with white-box access to both <em>θ<sub>org</sub></em> and <em>θ<sub>u</sub></em> exploits the parameter difference <em>Δθ</em> for both membership inference and data reconstruction.</figcaption>
+    </figure>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-num">Leak source · 01</div>
+        <h3>Large forget-set gradient norms</h3>
+        <p>Samples with high gradient magnitude leave a strong, detectable signature in Δθ — proportional to how much the unlearning step had to move.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">Leak source · 02</div>
+        <h3>Small parameter displacement</h3>
+        <p>Retain-loss regularisation keeps θ<sub>u</sub> close to θ<sub>org</sub>. The forget signal stays readable above the noise.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="observation">
+    <div class="section-head">
+      <span class="section-label">02 · Key Observation</span>
+      <h2 class="section-title">Gradient norm predicts privacy risk</h2>
+      <p class="section-lede">The two knobs WARP turns.</p>
+    </div>
+
+    <figure class="fig framed">
+      <img src="assets/gradient_norm.png" alt="Average privacy risk increasing monotonically with forget-sample gradient norm (log scale)." />
+      <figcaption><b>Fig 2.</b> Privacy risk grows with the gradient norm of a forgotten sample (U-LiRA, NGP on CIFAR-10). Samples with larger gradient magnitudes are measurably more exposed after unlearning.</figcaption>
+    </figure>
+  </section>
+
+  <section id="method">
+    <div class="section-head">
+      <span class="section-label">03 · Method</span>
+      <h2 class="section-title">WARP — symmetry &amp; teleportation</h2>
+      <p class="section-lede">Move along the loss-invariant manifold. Forget the path, keep the function.</p>
+    </div>
+
+    <p>
+      <strong>Symmetry.</strong> A transformation <span class="chip">g</span> of parameters <span class="chip">θ</span>
+      such that the input-to-output map is preserved: <span class="chip">L(g·θ) = L(θ)</span>.
+      <strong>Teleportation.</strong> Updating <span class="chip">θ ↦ g·θ</span> along this manifold — the network
+      computes the same function, but its parameters change, and so does the geometry of Δθ.
+    </p>
+
+    <figure class="fig">
+      <img src="assets/fig_methodology.png" alt="Three-panel WARP methodology figure — Vanilla Unlearning vs. Teleportation Step vs. Comparison (easier/harder to attack)." />
+      <figcaption><b>Fig 3.</b> Vanilla unlearning stays close to θ<sub>org</sub>, so Δθ directly encodes the forget gradient. A teleportation step along the retain-preserving manifold yields an equivalent function with smaller forget gradients and larger parameter dispersion — the attack surface collapses while utility is retained.</figcaption>
+    </figure>
+
+    <p style="margin-top: 36px;">
+      <strong>WARP objective.</strong> After each unlearning step, pick a teleport <span class="chip">g<sup>⋆</sup></span>
+      that shrinks forget-gradient energy, disperses parameters from the original, and preserves retain utility:
+    </p>
+
+    <div class="eq-img">
+      <img src="assets/warp_objective.png" alt="WARP objective: g* in argmin over G of sum of forget gradient norms minus beta times parameter displacement, subject to retain loss constraint." />
+    </div>
+
+    <p>
+      We instantiate <span class="chip">𝒢</span> via a <strong>retain null-space projection</strong>: using the
+      top-<span class="chip">k</span> left singular vectors of retain activations
+      <span class="chip">R<sub>ℓ</sub> = U<sub>ℓ</sub>Σ<sub>ℓ</sub>V<sub>ℓ</sub><sup>⊤</sup></span>, we form the
+      projector <span class="chip">Π<sub>ℓ</sub><sup>⊥</sup> = I − B<sub>ℓ</sub>B<sub>ℓ</sub><sup>⊤</sup></span>
+      and take each teleport step along the retain-orthogonal direction. Predictions on
+      <span class="chip">𝒟<sub>r</sub></span> drift only within numerical tolerance.
+    </p>
+  </section>
+
+  <section id="results">
+    <div class="section-head">
+      <span class="section-label">04 · Results</span>
+      <h2 class="section-title">Headline numbers</h2>
+      <p class="section-lede">Six unlearning algorithms · three datasets · two architectures.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="big">−64<span class="unit">%</span></div>
+        <div class="label">Black-box adversary advantage reduced (U-LiRA AUC, NGP)</div>
+      </div>
+      <div class="stat">
+        <div class="big">−92<span class="unit">%</span></div>
+        <div class="label">White-box adversary advantage reduced (gradient-diff AUC, PGU)</div>
+      </div>
+      <div class="stat">
+        <div class="big">+30<span class="unit">%</span></div>
+        <div class="label">PSNR gain of our reconstruction attack over prior gradient inversion</div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--serif); font-weight:500; font-size:22px; margin:40px 0 8px; color:var(--ink);">Membership inference — with &amp; without WARP</h3>
+    <p style="color:var(--ink-soft); font-size:15px; margin-bottom:18px;">
+      WARP consistently reduces membership leakage under both attack models — most dramatically at stringent low-FPR operating points.
+    </p>
+
+    <div class="tbl-scroll">
+      <table class="results">
+        <thead>
+          <tr>
+            <th class="method"></th>
+            <th class="group group-divider" colspan="2">Black-box (U-LiRA)</th>
+            <th class="group" colspan="2">White-box (Gradient Diff)</th>
+            <th>Utility</th>
+          </tr>
+          <tr>
+            <th class="method">Method</th>
+            <th>AUC</th>
+            <th class="group-divider">TPR @ 1% FPR</th>
+            <th>AUC</th>
+            <th>TPR @ 1% FPR</th>
+            <th>Test Acc.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="method">NGP</td><td>0.545</td><td class="group-divider">0.030</td><td>0.642</td><td>0.034</td><td>0.808</td></tr>
+          <tr class="warp"><td class="method">+ WARP</td><td>0.516</td><td class="group-divider">0.014</td><td>0.614</td><td>0.021</td><td>0.797</td></tr>
+          <tr class="div"><td colspan="6"></td></tr>
+          <tr><td class="method">SCRUB</td><td>0.543</td><td class="group-divider">0.047</td><td>0.700</td><td>0.102</td><td>0.815</td></tr>
+          <tr class="warp"><td class="method">+ WARP</td><td>0.526</td><td class="group-divider">0.036</td><td>0.657</td><td>0.061</td><td>0.813</td></tr>
+          <tr class="div"><td colspan="6"></td></tr>
+          <tr><td class="method">PGU</td><td>0.636</td><td class="group-divider">0.040</td><td>0.659</td><td>0.064</td><td>0.804</td></tr>
+          <tr class="warp"><td class="method">+ WARP</td><td>0.631</td><td class="group-divider">0.036</td><td>0.533</td><td>0.025</td><td>0.808</td></tr>
+          <tr class="div"><td colspan="6"></td></tr>
+          <tr><td class="method">SalUn</td><td>0.572</td><td class="group-divider">0.062</td><td>0.721</td><td>0.069</td><td>0.802</td></tr>
+          <tr class="warp"><td class="method">+ WARP</td><td>0.565</td><td class="group-divider">0.059</td><td>0.705</td><td>0.062</td><td>0.803</td></tr>
+          <tr class="div"><td colspan="6"></td></tr>
+          <tr><td class="method">SRF-ON</td><td>0.509</td><td class="group-divider">0.015</td><td>0.670</td><td>0.043</td><td>0.814</td></tr>
+          <tr class="warp"><td class="method">+ WARP</td><td>0.506</td><td class="group-divider">0.012</td><td>0.629</td><td>0.030</td><td>0.811</td></tr>
+          <tr class="div"><td colspan="6"></td></tr>
+          <tr><td class="method">BadT.</td><td>0.725</td><td class="group-divider">0.177</td><td>0.938</td><td>0.346</td><td>0.816</td></tr>
+          <tr class="warp"><td class="method">+ WARP</td><td>0.661</td><td class="group-divider">0.137</td><td>0.907</td><td>0.279</td><td>0.818</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tbl-note">CIFAR-10 / ResNet-18 · 64 shadow models × 10 forget sets. Full TPR@{0.1, 5}% and ViT-B/16 on Tiny-ImageNet results are in the paper.</p>
+  </section>
+
+  <section id="reconstruction">
+    <div class="section-head">
+      <span class="section-label">05 · Data Reconstruction</span>
+      <h2 class="section-title">Reconstructions collapse under WARP</h2>
+      <p class="section-lede">Even a strong generative-prior attack fails to recover forgotten images.</p>
+    </div>
+
+    <p>
+      Teleportation injects a component into Δθ that is nearly orthogonal to the true forget gradient
+      <span class="chip">g<sub>f</sub></span>, so the inverter collapses onto generic class priors: recoveries
+      become <em>label-consistent but semantically wrong</em>.
+    </p>
+
+    <figure class="fig framed">
+      <img src="assets/reconstructions.jpg" alt="Reconstruction comparison — original vs. NGP vs. NGP+WARP recoveries for four forgotten examples." />
+      <figcaption><b>Fig 4.</b> ImageNet-1K · ResNet-18 · NGP. Left-to-right in each triplet: original forgotten image, NGP recovery, NGP+WARP recovery. WARP drops reconstruction PSNR by <b style="color:var(--hot);">3.4 dB</b> and doubles test MSE.</figcaption>
+    </figure>
+
+    <div class="tbl-scroll" style="margin-top: 10px;">
+      <table class="results">
+        <thead>
+          <tr>
+            <th class="method">Method</th>
+            <th>PSNR ↑</th>
+            <th>LPIPS ↓</th>
+            <th>SSIM ↑</th>
+            <th>Test MSE ↓</th>
+            <th>Feat MSE ↓</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="method">NGP</td><td>10.74</td><td>0.56</td><td>0.12</td><td>0.10</td><td>5.39</td></tr>
+          <tr class="warp"><td class="method">+ WARP</td><td>7.38</td><td>0.68</td><td>0.08</td><td>0.21</td><td>11.28</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="takeaways">
+    <div class="section-head">
+      <span class="section-label">06 · Take-aways</span>
+      <h2 class="section-title">Three things to remember</h2>
+    </div>
+
+    <div class="takeaway">
+      <div class="num">i</div>
+      <div class="body">
+        <h3>Black-box audits are not enough</h3>
+        <p>Unlearning methods that look safe under U-LiRA can still leak substantially under a white-box gradient-difference test.</p>
+      </div>
+    </div>
+    <div class="takeaway">
+      <div class="num">ii</div>
+      <div class="body">
+        <h3>Reshape the geometry — don't inject noise</h3>
+        <p>WARP reshapes Δθ along a loss-invariant manifold. No training-time statistics, no added DP noise, no change to the unlearning algorithm.</p>
+      </div>
+    </div>
+    <div class="takeaway">
+      <div class="num">iii</div>
+      <div class="body">
+        <h3>Beats DP-Langevin at matched utility</h3>
+        <p>WARP outperforms projected DP-Langevin unlearning at comparable retain accuracy — with an information-theoretic backing (see Appendix O).</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="bibtex">
+    <div class="section-head">
+      <span class="section-label">07 · Citation</span>
+      <h2 class="section-title">If you find WARP useful</h2>
+    </div>
+
+    <div class="bibtex" id="bibCode">@inproceedings{maheri2026warp,
+  title     = {Weight Teleportation for Attack-Resilient Unlearning Protocols},
+  author    = {Maheri, Mohammad M. and Cadet, Xavier and Chin, Peter and Haddadi, Hamed},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2026}
+}<button class="copy-btn" id="copyBtn" type="button">Copy</button></div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="logos-footer">
+      <img src="assets/imperial.png" alt="Imperial" />
+      <img src="assets/dartmouth.png" alt="Dartmouth" />
+    </div>
+    <div>© 2026 · WARP project page · ICLR 2026</div>
+    <div class="funding">
+      Supported by UKRI Open Plus Fellowship (EP/W005271/1) · EU CHIST-ERA GRAPHS4SEC · DARPA W912CG23C0031
+    </div>
+  </div>
+</footer>
+
+<script>
+  const btn = document.getElementById('copyBtn');
+  const code = document.getElementById('bibCode');
+  btn.addEventListener('click', async () => {
+    const txt = code.childNodes[0].nodeValue.trim();
+    try {
+      await navigator.clipboard.writeText(txt);
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('ok');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 1800);
+    } catch (e) {
+      btn.textContent = 'Select manually';
+    }
+  });
+
+  const navLinks = document.querySelectorAll('nav.topnav .links a');
+  const sections = [...navLinks].map(a => {
+    const id = a.getAttribute('href').replace('#','');
+    return document.getElementById(id);
+  });
+  function onScroll() {
+    const y = window.scrollY + 80;
+    let active = -1;
+    sections.forEach((s, i) => {
+      if (s && s.offsetTop <= y) active = i;
+    });
+    navLinks.forEach((a, i) => {
+      a.style.color = i === active ? 'var(--ink)' : '';
+      a.style.fontWeight = i === active ? '600' : '';
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+
+</body>
+</html>
