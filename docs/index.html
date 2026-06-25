@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>WARP · Weight Teleportation for Attack-Resilient Unlearning Protocols</title>
+<title>WARP &#183; Weight Teleportation for Attack-Resilient Unlearning Protocols</title>
 <meta name="description" content="WARP is a plug-and-play symmetry-based defense that reshapes the geometry of approximate unlearning to suppress privacy leakage. ICLR 2026." />
-<meta property="og:title" content="WARP — Weight Teleportation for Attack-Resilient Unlearning Protocols" />
+<meta property="og:title" content="WARP &#8212; Weight Teleportation for Attack-Resilient Unlearning Protocols" />
 <meta property="og:description" content="A symmetry-based defense for privacy leakage in approximate machine unlearning. ICLR 2026." />
 <meta property="og:type" content="website" />
 <meta property="og:image" content="assets/fig_methodology.png" />
@@ -660,20 +660,20 @@
 <div id="top"></div>
 <header class="hero">
   <div class="wrap">
-    <span class="venue-badge">ICLR 2026 · Rio de Janeiro</span>
+    <span class="venue-badge">ICLR 2026 &#183; Rio de Janeiro</span>
 <h1 class="title">
   <span class="wrp">W</span>eight Teleportation for
   <span class="wrp">A</span>ttack-<span class="wrp">R</span>esilient Unlearning
   <span class="wrp">P</span>rotocols
 </h1>
 <p class="tagline">
-  A plug-and-play symmetry defense that reshapes the geometry of approximate unlearning —
+  A plug-and-play symmetry defense that reshapes the geometry of approximate unlearning &#8212;
   reducing privacy leakage without retraining, added noise, or changing the unlearning algorithm.
 </p>
 <div class="authors">
-  <span class="author"><a href="#">Mohammad M. Maheri</a><sup>1</sup></span><span class="sep">·</span>
-  <span class="author"><a href="#">Xavier Cadet</a><sup>2</sup></span><span class="sep">·</span>
-  <span class="author"><a href="#">Peter Chin</a><sup>2</sup></span><span class="sep">·</span>
+  <span class="author"><a href="#">Mohammad M. Maheri</a><sup>1</sup></span><span class="sep">&#183;</span>
+  <span class="author"><a href="#">Xavier Cadet</a><sup>2</sup></span><span class="sep">&#183;</span>
+  <span class="author"><a href="#">Peter Chin</a><sup>2</sup></span><span class="sep">&#183;</span>
   <span class="author"><a href="#">Hamed Haddadi</a><sup>1</sup></span>
 </div>
 <div class="affiliations">
@@ -717,48 +717,48 @@
     <div class="tldr">
       <p>
         Approximate machine unlearning leaks: the difference
-        <span class="chip">Δθ = θ<sub>u</sub> − θ<sub>org</sub></span>
+        <span class="chip">&#916;&#952; = &#952;<sub>u</sub> &#8722; &#952;<sub>org</sub></span>
         encodes a forget-set gradient that attackers can invert. <strong>WARP</strong> interleaves a
-        <span class="hl">loss-invariant teleportation step</span> with unlearning — walking along a
+        <span class="hl">loss-invariant teleportation step</span> with unlearning &#8212; walking along a
         symmetry orbit of the network to <strong>shrink forget-set gradients</strong> and
         <strong>disperse parameters</strong>, all while keeping predictions on the retain set intact.
-        Result: up to <strong>−64% black-box</strong> and <strong>−92% white-box</strong> adversary
+        Result: up to <strong>&#8722;64% black-box</strong> and <strong>&#8722;92% white-box</strong> adversary
         advantage across six unlearning methods, with utility preserved.
       </p>
     </div>
   </section>
   <section id="problem">
     <div class="section-head">
-      <span class="section-label">01 · The Threat</span>
+      <span class="section-label">01 &#183; The Threat</span>
       <h2 class="section-title">The privacy gap in unlearning</h2>
-      <p class="section-lede">Unlearning is efficient — but privacy is not automatic.</p>
+      <p class="section-lede">Unlearning is efficient &#8212; but privacy is not automatic.</p>
     </div>
 <p>
-  An adversary who holds both the original model <span class="chip">θ<sub>org</sub></span> and the
-  unlearned model <span class="chip">θ<sub>u</sub></span> observes their difference, which to first
+  An adversary who holds both the original model <span class="chip">&#952;<sub>org</sub></span> and the
+  unlearned model <span class="chip">&#952;<sub>u</sub></span> observes their difference, which to first
   order is a weighted forget-set gradient. That single quantity is enough to mount strong
   <em>membership inference</em> and even <em>data reconstruction</em> attacks.
 </p>
 <figure class="fig">
-  <img src="assets/fig_problem.png" alt="Threat model — adversary with access to both original and unlearned model runs membership inference and reconstruction attacks." />
-  <figcaption><b>Fig 1.</b> Threat model. An adversary with white-box access to both <em>θ<sub>org</sub></em> and <em>θ<sub>u</sub></em> exploits the parameter difference <em>Δθ</em> for both membership inference and data reconstruction.</figcaption>
+  <img src="assets/fig_problem.png" alt="Threat model &#8212; adversary with access to both original and unlearned model runs membership inference and reconstruction attacks." />
+  <figcaption><b>Fig 1.</b> Threat model. An adversary with white-box access to both <em>&#952;<sub>org</sub></em> and <em>&#952;<sub>u</sub></em> exploits the parameter difference <em>&#916;&#952;</em> for both membership inference and data reconstruction.</figcaption>
 </figure>
 <div class="cards">
   <div class="card">
-    <div class="card-num">Leak source · 01</div>
+    <div class="card-num">Leak source &#183; 01</div>
     <h3>Large forget-set gradient norms</h3>
-    <p>Samples with high gradient magnitude leave a strong, detectable signature in Δθ — proportional to how much the unlearning step had to move.</p>
+    <p>Samples with high gradient magnitude leave a strong, detectable signature in &#916;&#952; &#8212; proportional to how much the unlearning step had to move.</p>
   </div>
   <div class="card">
-    <div class="card-num">Leak source · 02</div>
+    <div class="card-num">Leak source &#183; 02</div>
     <h3>Small parameter displacement</h3>
-    <p>Retain-loss regularisation keeps θ<sub>u</sub> close to θ<sub>org</sub>. The forget signal stays readable above the noise.</p>
+    <p>Retain-loss regularisation keeps &#952;<sub>u</sub> close to &#952;<sub>org</sub>. The forget signal stays readable above the noise.</p>
   </div>
 </div>
   </section>
   <section id="observation">
     <div class="section-head">
-      <span class="section-label">02 · Key Observation</span>
+      <span class="section-label">02 &#183; Key Observation</span>
       <h2 class="section-title">Gradient norm predicts privacy risk</h2>
       <p class="section-lede">The two knobs WARP turns.</p>
     </div>
@@ -769,49 +769,49 @@
   </section>
   <section id="method">
     <div class="section-head">
-      <span class="section-label">03 · Method</span>
-      <h2 class="section-title">WARP — symmetry and teleportation</h2>
+      <span class="section-label">03 &#183; Method</span>
+      <h2 class="section-title">WARP &#8212; symmetry and teleportation</h2>
       <p class="section-lede">Move along the loss-invariant manifold. Forget the path, keep the function.</p>
     </div>
 <p>
-  <strong>Symmetry.</strong> A transformation <span class="chip">g</span> of parameters <span class="chip">θ</span>
-  such that the input-to-output map is preserved: <span class="chip">L(g·θ) = L(θ)</span>.
-  <strong>Teleportation.</strong> Updating <span class="chip">θ ↦ g·θ</span> along this manifold — the network
-  computes the same function, but its parameters change, and so does the geometry of Δθ.
+  <strong>Symmetry.</strong> A transformation <span class="chip">g</span> of parameters <span class="chip">&#952;</span>
+  such that the input-to-output map is preserved: <span class="chip">L(g&#183;&#952;) = L(&#952;)</span>.
+  <strong>Teleportation.</strong> Updating <span class="chip">&#952; &#8614; g&#183;&#952;</span> along this manifold &#8212; the network
+  computes the same function, but its parameters change, and so does the geometry of &#916;&#952;.
 </p>
 <figure class="fig">
   <img src="assets/fig_methodology.png" alt="Three-panel WARP methodology figure: vanilla unlearning, teleportation step, and comparison." />
-  <figcaption><b>Fig 3.</b> Vanilla unlearning stays close to θ<sub>org</sub>, so Δθ directly encodes the forget gradient. A teleportation step along the retain-preserving manifold yields an equivalent function with smaller forget gradients and larger parameter dispersion — the attack surface collapses while utility is retained.</figcaption>
+  <figcaption><b>Fig 3.</b> Vanilla unlearning stays close to &#952;<sub>org</sub>, so &#916;&#952; directly encodes the forget gradient. A teleportation step along the retain-preserving manifold yields an equivalent function with smaller forget gradients and larger parameter dispersion &#8212; the attack surface collapses while utility is retained.</figcaption>
 </figure>
 <p style="margin-top: 36px;">
-  <strong>WARP objective.</strong> After each unlearning step, pick a teleport <span class="chip">g<sup>⋆</sup></span>
+  <strong>WARP objective.</strong> After each unlearning step, pick a teleport <span class="chip">g<sup>&#8902;</sup></span>
   that shrinks forget-gradient energy, disperses parameters from the original, and preserves retain utility:
 </p>
 <div class="eq-img">
   <img src="assets/warp_objective.png" alt="WARP objective: g star in argmin over G of sum of forget gradient norms minus beta times parameter displacement, subject to retain loss constraint." />
 </div>
 <p>
-  We instantiate <span class="chip">𝒢</span> via a <strong>retain null-space projection</strong>: using the
+  We instantiate <span class="chip">&#119970;</span> via a <strong>retain null-space projection</strong>: using the
   top-<span class="chip">k</span> left singular vectors of retain activations
-  <span class="chip">R<sub>ℓ</sub> = U<sub>ℓ</sub>Σ<sub>ℓ</sub>V<sub>ℓ</sub><sup>⊤</sup></span>, we form the
-  projector <span class="chip">Π<sub>ℓ</sub><sup>⊥</sup> = I − B<sub>ℓ</sub>B<sub>ℓ</sub><sup>⊤</sup></span>
+  <span class="chip">R<sub>&#8467;</sub> = U<sub>&#8467;</sub>&#931;<sub>&#8467;</sub>V<sub>&#8467;</sub><sup>&#8868;</sup></span>, we form the
+  projector <span class="chip">&#928;<sub>&#8467;</sub><sup>&#8869;</sup> = I &#8722; B<sub>&#8467;</sub>B<sub>&#8467;</sub><sup>&#8868;</sup></span>
   and take each teleport step along the retain-orthogonal direction. Predictions on
-  <span class="chip">𝒟<sub>r</sub></span> drift only within numerical tolerance.
+  <span class="chip">&#119967;<sub>r</sub></span> drift only within numerical tolerance.
 </p>
   </section>
   <section id="results">
     <div class="section-head">
-      <span class="section-label">04 · Results</span>
+      <span class="section-label">04 &#183; Results</span>
       <h2 class="section-title">Headline numbers</h2>
-      <p class="section-lede">Six unlearning algorithms · three datasets · two architectures.</p>
+      <p class="section-lede">Six unlearning algorithms &#183; three datasets &#183; two architectures.</p>
     </div>
 <div class="stats">
   <div class="stat">
-    <div class="big">−64<span class="unit">%</span></div>
+    <div class="big">&#8722;64<span class="unit">%</span></div>
     <div class="label">Black-box adversary advantage reduced using U-LiRA AUC and NGP</div>
   </div>
   <div class="stat">
-    <div class="big">−92<span class="unit">%</span></div>
+    <div class="big">&#8722;92<span class="unit">%</span></div>
     <div class="label">White-box adversary advantage reduced using gradient-difference AUC and PGU</div>
   </div>
   <div class="stat">
@@ -819,7 +819,7 @@
     <div class="label">PSNR gain of our reconstruction attack over prior gradient inversion</div>
   </div>
 </div>
-<h3 style="font-family:var(--serif); font-weight:500; font-size:22px; margin:40px 0 8px; color:var(--ink);">Membership inference — with and without WARP</h3>
+<h3 style="font-family:var(--serif); font-weight:500; font-size:22px; margin:40px 0 8px; color:var(--ink);">Membership inference &#8212; with and without WARP</h3>
 <p style="color:var(--ink-soft); font-size:15px; margin-bottom:18px;">
   WARP consistently reduces membership leakage under both attack models, most dramatically at stringent low-FPR operating points.
 </p>
@@ -863,34 +863,34 @@
   </table>
 </div>
 <p class="tbl-note">
-  CIFAR-10 / ResNet-18 · 64 shadow models × 10 forget sets. Full TPR@{0.1, 5}% and ViT-B/16 on Tiny-ImageNet results are in the paper.
+  CIFAR-10 / ResNet-18 &#183; 64 shadow models &#215; 10 forget sets. Full TPR@{0.1, 5}% and ViT-B/16 on Tiny-ImageNet results are in the paper.
 </p>
   </section>
   <section id="reconstruction">
     <div class="section-head">
-      <span class="section-label">05 · Data Reconstruction</span>
+      <span class="section-label">05 &#183; Data Reconstruction</span>
       <h2 class="section-title">Reconstructions collapse under WARP</h2>
       <p class="section-lede">Even a strong generative-prior attack fails to recover forgotten images.</p>
     </div>
 <p>
-  Teleportation injects a component into Δθ that is nearly orthogonal to the true forget gradient
+  Teleportation injects a component into &#916;&#952; that is nearly orthogonal to the true forget gradient
   <span class="chip">g<sub>f</sub></span>, so the inverter collapses onto generic class priors: recoveries
   become <em>label-consistent but semantically wrong</em>.
 </p>
 <figure class="fig framed">
   <img src="assets/reconstructions.png" alt="Reconstruction comparison: original, NGP, and NGP plus WARP recoveries for four forgotten examples." />
-  <figcaption><b>Fig 4.</b> ImageNet-1K · ResNet-18 · NGP. Left-to-right in each triplet: original forgotten image, NGP recovery, NGP+WARP recovery. WARP drops reconstruction PSNR by <b style="color:var(--hot);">3.4 dB</b> and doubles test MSE.</figcaption>
+  <figcaption><b>Fig 4.</b> ImageNet-1K &#183; ResNet-18 &#183; NGP. Left-to-right in each triplet: original forgotten image, NGP recovery, NGP+WARP recovery. WARP drops reconstruction PSNR by <b style="color:var(--hot);">3.4 dB</b> and doubles test MSE.</figcaption>
 </figure>
 <div class="tbl-scroll" style="margin-top: 10px;">
   <table class="results">
     <thead>
       <tr>
         <th class="method">Method</th>
-        <th>PSNR ↑</th>
-        <th>LPIPS ↓</th>
-        <th>SSIM ↑</th>
-        <th>Test MSE ↓</th>
-        <th>Feat MSE ↓</th>
+        <th>PSNR &#8593;</th>
+        <th>LPIPS &#8595;</th>
+        <th>SSIM &#8593;</th>
+        <th>Test MSE &#8595;</th>
+        <th>Feat MSE &#8595;</th>
       </tr>
     </thead>
     <tbody>
@@ -902,7 +902,7 @@
   </section>
   <section id="takeaways">
     <div class="section-head">
-      <span class="section-label">06 · Take-aways</span>
+      <span class="section-label">06 &#183; Take-aways</span>
       <h2 class="section-title">Three things to remember</h2>
     </div>
 <div class="takeaway">
@@ -916,7 +916,7 @@
   <div class="num">ii</div>
   <div class="body">
     <h3>Reshape the geometry, do not inject noise</h3>
-    <p>WARP reshapes Δθ along a loss-invariant manifold. No training-time statistics, no added DP noise, and no change to the unlearning algorithm.</p>
+    <p>WARP reshapes &#916;&#952; along a loss-invariant manifold. No training-time statistics, no added DP noise, and no change to the unlearning algorithm.</p>
   </div>
 </div>
 <div class="takeaway">
@@ -929,7 +929,7 @@
   </section>
   <section id="bibtex">
     <div class="section-head">
-      <span class="section-label">07 · Citation</span>
+      <span class="section-label">07 &#183; Citation</span>
       <h2 class="section-title">If you find WARP useful</h2>
     </div>
 <div class="bibtex-wrapper">
@@ -949,9 +949,9 @@
       <img src="assets/imperial.png" alt="Imperial College London" />
       <img src="assets/dartmouth.png" alt="Dartmouth College" />
     </div>
-    <div>© 2026 · WARP project page · ICLR 2026</div>
+    <div>&#169; 2026 &#183; WARP project page &#183; ICLR 2026</div>
     <div class="funding">
-      Supported by UKRI Open Plus Fellowship EP/W005271/1 · EU CHIST-ERA GRAPHS4SEC · DARPA W912CG23C0031
+      Supported by UKRI Open Plus Fellowship EP/W005271/1 &#183; EU CHIST-ERA GRAPHS4SEC &#183; DARPA W912CG23C0031
     </div>
   </div>
 </footer>
@@ -962,7 +962,7 @@
     const txt = code.textContent.trim();
     try {
       await navigator.clipboard.writeText(txt);
-      btn.textContent = 'Copied ✓';
+      btn.textContent = 'Copied \u2713';
       btn.classList.add('ok');
       setTimeout(() => {
         btn.textContent = 'Copy';
