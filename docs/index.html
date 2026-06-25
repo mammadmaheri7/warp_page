@@ -357,6 +357,8 @@
     margin: 0 auto;
   }
   figure.fig.framed img {
+    box-sizing: border-box;
+    max-width: 100%;
     border: 1px solid var(--rule);
     background: white;
     padding: 16px;
@@ -931,14 +933,14 @@
       <h2 class="section-title">If you find WARP useful</h2>
     </div>
 <div class="bibtex-wrapper">
+  <button class="copy-btn" id="copyBtn" type="button" aria-label="Copy BibTeX to clipboard">Copy</button>
   <pre class="bibtex" id="bibCode"><code>@inproceedings{maheri2026warp,
-
-title     = {{WARP}: Weight Teleportation for Attack-Resilient Unlearning Protocols},
-author    = {Maheri, Mohammad M. and Cadet, Xavier and Chin, Peter and Haddadi, Hamed},
-booktitle = {The Fourteenth International Conference on Learning Representations},
-year      = {2026}
-}
-Copy
+  title     = {{WARP}: Weight Teleportation for Attack-Resilient Unlearning Protocols},
+  author    = {Maheri, Mohammad M. and Cadet, Xavier and Chin, Peter and Haddadi, Hamed},
+  booktitle = {The Fourteenth International Conference on Learning Representations},
+  year      = {2026}
+}</code></pre>
+</div>
   </section>
 </div>
 <footer>
